@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Habit Tracker</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #9ca3af;
+            --success-bg: #d1fae5;
+            --success-text: #065f46;
+            
+            /* --- NEW BLUE PALETTE BASED ON UPLOADED IMAGE --- */
+            /* Using a gradient that revolves around the Royal Blue from your image */
+            --btn-grad-start: #23559e; /* Slightly darker shade of the image color */
+            --btn-grad-end: #3b71ca;   /* The main blue color from the image */
+            --btn-text-color: #ffffff;
+            --btn-shadow-color: rgba(59, 113, 202, 0.5); /* Blue glow */
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            
+            /* --- BACKGROUND SETTINGS --- */
+            background-image: url('https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmZqZW94N3Y3cGsxNm42ODF5NDFmeDZucm5kdGJnbDU5dWw1eXlreCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/HLsH9WYM3JcNN4FRli/giphy.gif');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            /* ------------------------------- */
+
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.75rem;
+            margin: 10px 0 20px 0;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.9);
+        }
+
+        /* --- Responsive Grid --- */
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px; 
+        }
+        
+        @media (min-width: 480px) {
+            .button-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .button-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        /* --- UPDATED BUTTON STYLES --- */
+        .habit-btn {
+            /* Blue Gradient based on the image */
+            background-image: linear-gradient(135deg, var(--btn-grad-start), var(--btn-grad-end));
+            border: none;
+            border-radius: 16px;
+            padding: 12px 8px;
+            height: 100px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            
+            /* High contrast white text */
+            color: var(--btn-text-color);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3); 
+            
+            cursor: pointer;
+            /* Blue glow shadow */
+            box-shadow: 0 4px 15px var(--btn-shadow-color);
+            
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+        }
+
+        .habit-btn span.emoji {
+            font-size: 1.8rem;
+            filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+        }
+
+        .habit-btn:active {
+            transform: scale(0.97);
+            filter: brightness(0.9);
+        }
+
+        @media (hover: hover) {
+            .habit-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 25px var(--btn-shadow-color);
+                filter: brightness(1.1); 
+            }
+        }
+        /* -------------------------------- */
+
+
+        /* --- Log Section --- */
+        .log-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            flex-grow: 1;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f3f4f6;
+        }
+
+        .log-header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .log-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .log-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .log-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .log-habit-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .log-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 800;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px 20px;
+            font-size: 0.9rem;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Habit Tracker</h1>
+
+        <div class="button-grid">
+            <button class="habit-btn" onclick="logHabit('Strength Training', '💪')">
+                <span class="emoji">💪</span>
+                <span>Strength Training</span>
+            </button>
+            <button class="habit-btn" onclick="logHabit('Reading', '📖')">
+                <span class="emoji">📖</span>
+                <span>Reading</span>
+            </button>
+            <button class="habit-btn" onclick="logHabit('No Eating Out', '🍳')">
+                <span class="emoji">🍳</span>
+                <span>No Eating Out</span>
+            </button>
+            <button class="habit-btn" onclick="logHabit('Physio', '🏥')">
+                <span class="emoji">🏥</span>
+                <span>Physio</span>
+            </button>
+            <button class="habit-btn" onclick="logHabit('Learning Skill', '🧠')">
+                <span class="emoji">🧠</span>
+                <span>Learning Skill</span>
+            </button>
+        </div>
+
+        <div class="log-card">
+            <div class="log-header">
+                <h2>Activity Log</h2>
+            </div>
+            
+            <div id="empty-msg" class="empty-state">Loading history...</div>
+            <ul id="log-list" class="log-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwNfgHXFSXbxZNxmfhA7hq4Za3wY8GnVQbUsTrbrZ314v7HmKUbOiKX3B9IR1omzmo/exec";
+
+        let habitLog = [];
+
+        // Load data on startup
+        fetchLog();
+
+        async function logHabit(name, icon) {
+            const now = new Date();
+            const newEntry = {
+                habit: name,
+                icon: icon,
+                dateString: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                timeString: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+
+            // UI Update (Optimistic)
+            habitLog.unshift(newEntry);
+            renderList();
+
+            // Backend Update
+            try {
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newEntry)
+                });
+            } catch (e) {
+                console.error("Error saving to Sheets", e);
+            }
+        }
+
+        async function fetchLog() {
+            const emptyMsg = document.getElementById('empty-msg');
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                habitLog = data.reverse(); 
+                renderList();
+            } catch (e) {
+                console.error("Error fetching log", e);
+                emptyMsg.innerText = "No data found or connection error.";
+            }
+        }
+
+        function renderList() {
+            const list = document.getElementById('log-list');
+            const emptyMsg = document.getElementById('empty-msg');
+            list.innerHTML = '';
+
+            if (habitLog.length === 0) {
+                emptyMsg.style.display = 'block';
+                return;
+            }
+            emptyMsg.style.display = 'none';
+
+            habitLog.forEach(entry => {
+                const li = document.createElement('li');
+                li.className = 'log-item';
+                li.innerHTML = `
+                    <div class="log-info">
+                        <span class="log-habit-name">${entry.icon} ${entry.habit}</span>
+                        <span class="log-date">${entry.dateString} • ${entry.timeString || ''}</span>
+                    </div>
+                    <div class="status-badge">DONE</div>
+                `;
+                list.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
