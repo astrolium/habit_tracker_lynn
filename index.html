@@ -6,7 +6,8 @@
     <title>Habit Tracker</title>
     <style>
         :root {
-            --primary: #6366f1;
+            /* Basic Theme Colors */
+            --primary: #3b71ca; /* Matched to your blue */
             --bg: #f3f4f6;
             --card-bg: #ffffff;
             --text-main: #1f2937;
@@ -14,12 +15,11 @@
             --success-bg: #d1fae5;
             --success-text: #065f46;
             
-            /* --- NEW BLUE PALETTE BASED ON UPLOADED IMAGE --- */
-            /* Using a gradient that revolves around the Royal Blue from your image */
-            --btn-grad-start: #23559e; /* Slightly darker shade of the image color */
-            --btn-grad-end: #3b71ca;   /* The main blue color from the image */
+            /* --- YOUR CUSTOM BLUE PALETTE --- */
+            --btn-grad-start: #23559e; 
+            --btn-grad-end: #3b71ca;   
             --btn-text-color: #ffffff;
-            --btn-shadow-color: rgba(59, 113, 202, 0.5); /* Blue glow */
+            --btn-shadow-color: rgba(59, 113, 202, 0.5); 
         }
 
         * {
@@ -30,14 +30,13 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             
-            /* --- BACKGROUND SETTINGS --- */
+            /* --- YOUR BACKGROUND --- */
             background-image: url('https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmZqZW94N3Y3cGsxNm42ODF5NDFmeDZucm5kdGJnbDU5dWw1eXlreCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/HLsH9WYM3JcNN4FRli/giphy.gif');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            /* ------------------------------- */
-
+            
             color: var(--text-main);
             margin: 0;
             padding: 20px;
@@ -57,13 +56,72 @@
         h1 {
             text-align: center;
             font-size: 1.75rem;
-            margin: 10px 0 20px 0;
+            margin: 10px 0 0 0;
             font-weight: 800;
             color: #ffffff;
             text-shadow: 0 4px 12px rgba(0,0,0,0.9);
         }
 
-        /* --- Responsive Grid --- */
+        /* --- DASHBOARD (RING) --- */
+        .dashboard {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        .ring-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin-bottom: 12px;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.5s ease-out, stroke 0.3s;
+            transform-origin: 50% 50%;
+        }
+
+        .ring-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .ring-count {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--primary);
+        }
+
+        .ring-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .dashboard-text {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* --- BUTTON GRID --- */
         .button-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr); 
@@ -82,9 +140,7 @@
             }
         }
 
-        /* --- UPDATED BUTTON STYLES --- */
         .habit-btn {
-            /* Blue Gradient based on the image */
             background-image: linear-gradient(135deg, var(--btn-grad-start), var(--btn-grad-end));
             border: none;
             border-radius: 16px;
@@ -92,15 +148,10 @@
             height: 100px;
             font-size: 0.95rem;
             font-weight: 700;
-            
-            /* High contrast white text */
             color: var(--btn-text-color);
             text-shadow: 0 1px 3px rgba(0,0,0,0.3); 
-            
             cursor: pointer;
-            /* Blue glow shadow */
             box-shadow: 0 4px 15px var(--btn-shadow-color);
-            
             transition: all 0.2s ease-in-out;
             display: flex;
             flex-direction: column;
@@ -127,10 +178,59 @@
                 filter: brightness(1.1); 
             }
         }
-        /* -------------------------------- */
 
+        /* --- WEEKLY CHART --- */
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
 
-        /* --- Log Section --- */
+        .chart-header {
+            margin: 0 0 20px 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 120px;
+            padding-bottom: 10px;
+        }
+
+        .bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .bar {
+            width: 14px;
+            background-color: var(--primary);
+            border-radius: 10px;
+            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 6px;
+            opacity: 0.3; 
+        }
+
+        .bar.has-data { opacity: 1; }
+        .bar.completed { background-color: var(--success-text); }
+
+        .day-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* --- LOG LIST --- */
         .log-card {
             background: var(--card-bg);
             border-radius: 20px;
@@ -151,6 +251,16 @@
         .log-header h2 {
             margin: 0;
             font-size: 1.1rem;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 8px 0;
+            cursor: pointer;
         }
 
         .log-list {
@@ -212,6 +322,20 @@
     <div class="container">
         <h1>Habit Tracker</h1>
 
+        <div class="dashboard">
+            <div class="ring-container">
+                <svg class="progress-ring" width="160" height="160">
+                    <circle class="progress-ring__circle-bg" stroke="#e5e7eb" stroke-width="12" fill="transparent" r="66" cx="80" cy="80" stroke-linecap="round"/>
+                    <circle class="progress-ring__circle" stroke="#3b71ca" stroke-width="12" fill="transparent" r="66" cx="80" cy="80" stroke-linecap="round" stroke-dasharray="414.69 414.69" stroke-dashoffset="414.69"/>
+                </svg>
+                <div class="ring-content">
+                    <span class="ring-count" id="ring-count-display">0</span>
+                    <span class="ring-label">TODAY</span>
+                </div>
+            </div>
+            <div id="dashboard-message" class="dashboard-text">Log 3 habits to close the ring!</div>
+        </div>
+
         <div class="button-grid">
             <button class="habit-btn" onclick="logHabit('Strength Training', '💪')">
                 <span class="emoji">💪</span>
@@ -235,9 +359,16 @@
             </button>
         </div>
 
+        <div class="chart-card">
+            <h2 class="chart-header">Last 7 Days</h2>
+            <div id="weekly-chart" class="chart-container">
+                </div>
+        </div>
+
         <div class="log-card">
             <div class="log-header">
                 <h2>Activity Log</h2>
+                <button class="clear-btn" onclick="clearLog()">Reset</button>
             </div>
             
             <div id="empty-msg" class="empty-state">Loading history...</div>
@@ -246,24 +377,45 @@
     </div>
 
     <script>
+        // YOUR SPECIFIC SCRIPT URL
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwNfgHXFSXbxZNxmfhA7hq4Za3wY8GnVQbUsTrbrZ314v7HmKUbOiKX3B9IR1omzmo/exec";
 
         let habitLog = [];
+        const DAILY_GOAL = 3;
+        const CIRCUMFERENCE = 2 * Math.PI * 66; 
 
-        // Load data on startup
+        // 1. Load Local Cache Immediately
+        const cached = localStorage.getItem('myHabits');
+        if (cached) {
+            habitLog = JSON.parse(cached);
+            renderList();
+        }
+
+        // 2. Fetch Fresh Data
         fetchLog();
 
         async function logHabit(name, icon) {
             const now = new Date();
-            const newEntry = {
+            
+            // UI Object (With Time)
+            const uiEntry = {
                 habit: name,
                 icon: icon,
-                dateString: now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                dateString: now.toLocaleDateString('en-US'), 
                 timeString: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
 
+            // Sheet Payload (Empty Time)
+            const sheetPayload = {
+                habit: name,
+                icon: icon,
+                dateString: now.toLocaleDateString('en-US'),
+                timeString: "" 
+            };
+
             // UI Update (Optimistic)
-            habitLog.unshift(newEntry);
+            habitLog.unshift(uiEntry);
+            localStorage.setItem('myHabits', JSON.stringify(habitLog));
             renderList();
 
             // Backend Update
@@ -273,7 +425,7 @@
                     mode: 'no-cors',
                     cache: 'no-cache',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newEntry)
+                    body: JSON.stringify(sheetPayload)
                 });
             } catch (e) {
                 console.error("Error saving to Sheets", e);
@@ -281,16 +433,114 @@
         }
 
         async function fetchLog() {
-            const emptyMsg = document.getElementById('empty-msg');
             try {
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
                 habitLog = data.reverse(); 
+                localStorage.setItem('myHabits', JSON.stringify(habitLog));
                 renderList();
             } catch (e) {
                 console.error("Error fetching log", e);
-                emptyMsg.innerText = "No data found or connection error.";
             }
+        }
+
+        function clearLog() {
+            if(confirm("Clear local history?")) {
+                habitLog = [];
+                localStorage.removeItem('myHabits');
+                renderList();
+            }
+        }
+
+        // --- Helper Functions ---
+
+        function isToday(dateString) {
+            if (!dateString) return false;
+            const today = new Date();
+            const checkDate = new Date(dateString);
+            if (isNaN(checkDate.getTime())) return false;
+            
+            return checkDate.getDate() === today.getDate() &&
+                   checkDate.getMonth() === today.getMonth() &&
+                   checkDate.getFullYear() === today.getFullYear();
+        }
+
+        function formatDisplayDate(dateString) {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return dateString;
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+
+        // --- Render Functions ---
+
+        function updateDashboard() {
+            const todayCount = habitLog.filter(entry => isToday(entry.dateString)).length;
+
+            document.getElementById('ring-count-display').innerText = todayCount;
+            const msg = document.getElementById('dashboard-message');
+            const circle = document.querySelector('.progress-ring__circle');
+            
+            if (todayCount >= DAILY_GOAL) {
+                msg.innerText = "Ring closed! Great job! 🎉";
+                msg.style.color = "var(--success-text)";
+                circle.style.stroke = "#059669";
+            } else {
+                const left = DAILY_GOAL - todayCount;
+                msg.innerText = `${left} more to close your ring`;
+                msg.style.color = "var(--text-muted)";
+                circle.style.stroke = "#3b71ca"; // Your Blue
+            }
+
+            const progress = Math.min(todayCount / DAILY_GOAL, 1);
+            const offset = CIRCUMFERENCE - (progress * CIRCUMFERENCE);
+            circle.style.strokeDashoffset = offset;
+        }
+
+        function renderChart() {
+            const chartContainer = document.getElementById('weekly-chart');
+            chartContainer.innerHTML = '';
+
+            // Generate last 7 days
+            const last7Days = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                last7Days.push(d);
+            }
+
+            // Aggregate Data
+            const counts = {};
+            habitLog.forEach(entry => {
+                const d = new Date(entry.dateString);
+                if (!isNaN(d.getTime())) {
+                    const key = d.toLocaleDateString('en-US'); 
+                    counts[key] = (counts[key] || 0) + 1;
+                }
+            });
+
+            // Scale
+            const maxVal = Math.max(5, ...Object.values(counts));
+
+            // Render
+            last7Days.forEach(dateObj => {
+                const dateKey = dateObj.toLocaleDateString('en-US');
+                const dayLabel = dateObj.toLocaleDateString('en-US', { weekday: 'narrow' }); // M, T, W...
+                
+                const count = counts[dateKey] || 0;
+                const heightPct = (count / maxVal) * 100;
+                
+                let barClass = 'bar';
+                if (count > 0) barClass += ' has-data';
+                if (count >= DAILY_GOAL) barClass += ' completed';
+
+                const html = `
+                    <div class="bar-group">
+                        <div class="${barClass}" style="height: ${heightPct}%"></div>
+                        <span class="day-label">${dayLabel}</span>
+                    </div>
+                `;
+                chartContainer.insertAdjacentHTML('beforeend', html);
+            });
         }
 
         function renderList() {
@@ -298,8 +548,12 @@
             const emptyMsg = document.getElementById('empty-msg');
             list.innerHTML = '';
 
+            updateDashboard();
+            renderChart();
+
             if (habitLog.length === 0) {
                 emptyMsg.style.display = 'block';
+                emptyMsg.innerText = "No habits logged yet.";
                 return;
             }
             emptyMsg.style.display = 'none';
@@ -307,10 +561,13 @@
             habitLog.forEach(entry => {
                 const li = document.createElement('li');
                 li.className = 'log-item';
+                
+                const displayDate = formatDisplayDate(entry.dateString);
+
                 li.innerHTML = `
                     <div class="log-info">
                         <span class="log-habit-name">${entry.icon} ${entry.habit}</span>
-                        <span class="log-date">${entry.dateString} • ${entry.timeString || ''}</span>
+                        <span class="log-date">${displayDate} ${entry.timeString ? '• ' + entry.timeString : ''}</span>
                     </div>
                     <div class="status-badge">DONE</div>
                 `;
