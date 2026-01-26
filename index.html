@@ -6,20 +6,38 @@
     <title>Habit Tracker</title>
     <style>
         :root {
-            /* Basic Theme Colors */
-            --primary: #3b71ca; /* Matched to your blue */
+            /* --- DEFAULT (DARK MODE) VARIABLES --- */
+            --bg: #232d23;           
+            --primary: #98A869;      
+            --card-bg: #2d382d;      
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --ring-track: #374151;
+            --success-text: #98A869; 
+            --success-bg: rgba(152, 168, 105, 0.2);
+            --border-color: #374151;
+            
+            /* Button Styling */
+            --btn-bg: #2d382d;
+            --btn-text: #f3f4f6;
+            --btn-hover: #354235;
+        }
+
+        /* --- LIGHT MODE OVERRIDES --- */
+        [data-theme="light"] {
             --bg: #f3f4f6;
+            --primary: #5c6b38;      
             --card-bg: #ffffff;
             --text-main: #1f2937;
-            --text-muted: #9ca3af;
-            --success-bg: #d1fae5;
-            --success-text: #065f46;
+            --text-muted: #6b7280;
+            --ring-track: #e5e7eb;
+            --success-text: #3f6212;
+            --success-bg: #ecfccb;
+            --border-color: #e5e7eb;
             
-            /* --- YOUR CUSTOM BLUE PALETTE --- */
-            --btn-grad-start: #23559e; 
-            --btn-grad-end: #3b71ca;   
-            --btn-text-color: #ffffff;
-            --btn-shadow-color: rgba(59, 113, 202, 0.5); 
+            --btn-bg: #ffffff;
+            --btn-text: #1f2937;
+            --btn-hover: #f9fafb;
         }
 
         * {
@@ -29,20 +47,14 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            
-            /* --- YOUR BACKGROUND --- */
-            background-image: url('https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmZqZW94N3Y3cGsxNm42ODF5NDFmeDZucm5kdGJnbDU5dWw1eXlreCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/HLsH9WYM3JcNN4FRli/giphy.gif');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            
+            background-color: var(--bg);
             color: var(--text-main);
             margin: 0;
             padding: 20px;
             min-height: 100vh;
             display: flex;
             justify-content: center;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
@@ -51,6 +63,7 @@
             display: flex;
             flex-direction: column;
             gap: 24px;
+            position: relative;
         }
 
         h1 {
@@ -58,33 +71,76 @@
             font-size: 1.75rem;
             margin: 10px 0 0 0;
             font-weight: 800;
-            color: #ffffff;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.9);
+            color: var(--text-main);
         }
 
-        /* --- DASHBOARD (RING) --- */
+        /* --- HEADER CONTROLS (THEME + SHEET LINK) --- */
+        .header-controls {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .control-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            text-decoration: none; /* For the anchor tag */
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            background-color: var(--btn-hover);
+        }
+
+        /* --- DASHBOARD --- */
         .dashboard {
             background: var(--card-bg);
             border-radius: 24px;
             padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .dashboard-left {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-            text-align: center;
+            flex-shrink: 0; 
         }
 
         .ring-container {
             position: relative;
-            width: 160px;
-            height: 160px;
+            width: 140px;
+            height: 140px;
             margin-bottom: 12px;
         }
 
         .progress-ring {
             transform: rotate(-90deg);
             transform-origin: 50% 50%;
+        }
+
+        .progress-ring__circle-bg {
+            stroke: var(--ring-track);
+            transition: stroke 0.3s;
         }
 
         .progress-ring__circle {
@@ -103,22 +159,72 @@
         }
 
         .ring-count {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 800;
             line-height: 1;
             color: var(--primary);
         }
 
         .ring-label {
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             margin-top: 4px;
             font-weight: 600;
         }
 
         .dashboard-text {
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Chart Section */
+        .dashboard-right {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            height: 140px;
+            flex-grow: 1; 
+            max-width: 280px;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+            height: 100%;
+        }
+
+        .bar-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex: 1;
+            height: 100%;
+            justify-content: flex-end;
+        }
+
+        .bar {
+            width: 10px;
+            background-color: var(--primary);
+            border-radius: 10px;
+            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 6px;
+            opacity: 0.3; 
+        }
+
+        .bar.has-data { opacity: 1; }
+        .bar.completed { background-color: var(--success-text); }
+
+        .day-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
         }
 
         /* --- BUTTON GRID --- */
@@ -141,17 +247,16 @@
         }
 
         .habit-btn {
-            background-image: linear-gradient(135deg, var(--btn-grad-start), var(--btn-grad-end));
-            border: none;
+            background-color: var(--btn-bg);
+            border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 12px 8px;
             height: 100px;
             font-size: 0.95rem;
             font-weight: 700;
-            color: var(--btn-text-color);
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3); 
+            color: var(--btn-text);
             cursor: pointer;
-            box-shadow: 0 4px 15px var(--btn-shadow-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             transition: all 0.2s ease-in-out;
             display: flex;
             flex-direction: column;
@@ -163,80 +268,30 @@
 
         .habit-btn span.emoji {
             font-size: 1.8rem;
-            filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
         }
 
         .habit-btn:active {
             transform: scale(0.97);
-            filter: brightness(0.9);
+            background-color: var(--btn-hover);
         }
 
         @media (hover: hover) {
             .habit-btn:hover {
                 transform: translateY(-3px);
-                box-shadow: 0 8px 25px var(--btn-shadow-color);
-                filter: brightness(1.1); 
+                border-color: var(--primary);
+                color: var(--primary);
             }
-        }
-
-        /* --- WEEKLY CHART --- */
-        .chart-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .chart-header {
-            margin: 0 0 20px 0;
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .chart-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            height: 120px;
-            padding-bottom: 10px;
-        }
-
-        .bar-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-            height: 100%;
-            justify-content: flex-end;
-        }
-
-        .bar {
-            width: 14px;
-            background-color: var(--primary);
-            border-radius: 10px;
-            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            min-height: 6px;
-            opacity: 0.3; 
-        }
-
-        .bar.has-data { opacity: 1; }
-        .bar.completed { background-color: var(--success-text); }
-
-        .day-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
         }
 
         /* --- LOG LIST --- */
         .log-card {
             background: var(--card-bg);
             border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            padding: 20px 20px 0 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             flex-grow: 1;
+            transition: background-color 0.3s;
+            overflow: hidden;
         }
 
         .log-header {
@@ -245,22 +300,12 @@
             align-items: center;
             margin-bottom: 16px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #f3f4f6;
+            border-bottom: 2px solid var(--bg);
         }
 
         .log-header h2 {
             margin: 0;
             font-size: 1.1rem;
-        }
-
-        .clear-btn {
-            background: none;
-            border: none;
-            color: #ef4444;
-            font-weight: 600;
-            font-size: 0.85rem;
-            padding: 8px 0;
-            cursor: pointer;
         }
 
         .log-list {
@@ -274,7 +319,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 12px 0;
-            border-bottom: 1px solid #f3f4f6;
+            border-bottom: 1px solid var(--bg);
             animation: slideIn 0.3s ease-out;
         }
 
@@ -315,25 +360,60 @@
             font-size: 0.9rem;
         }
 
+        .show-more-btn {
+            width: 100%;
+            padding: 15px;
+            background: none;
+            border: none;
+            border-top: 1px solid var(--bg);
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 5px;
+            transition: background-color 0.2s;
+        }
+        
+        .show-more-btn:hover {
+            background-color: var(--bg);
+        }
+
     </style>
 </head>
-<body>
+<body data-theme="dark">
 
     <div class="container">
+        <div class="header-controls">
+            <a href="https://docs.google.com/spreadsheets/d/1dgY2U8AfOZRhkXvNWBw9UP3gCmxSI3D4btspSB39Erg/edit?gid=0#gid=0" target="_blank" class="control-btn" aria-label="Open Google Sheet">
+                📊
+            </a>
+            <button class="control-btn" onclick="toggleTheme()" aria-label="Toggle Theme">
+                <span id="theme-icon">☀️</span>
+            </button>
+        </div>
+
         <h1>Habit Tracker</h1>
 
         <div class="dashboard">
-            <div class="ring-container">
-                <svg class="progress-ring" width="160" height="160">
-                    <circle class="progress-ring__circle-bg" stroke="#e5e7eb" stroke-width="12" fill="transparent" r="66" cx="80" cy="80" stroke-linecap="round"/>
-                    <circle class="progress-ring__circle" stroke="#3b71ca" stroke-width="12" fill="transparent" r="66" cx="80" cy="80" stroke-linecap="round" stroke-dasharray="414.69 414.69" stroke-dashoffset="414.69"/>
-                </svg>
-                <div class="ring-content">
-                    <span class="ring-count" id="ring-count-display">0</span>
-                    <span class="ring-label">TODAY</span>
+            <div class="dashboard-left">
+                <div class="ring-container">
+                    <svg class="progress-ring" width="140" height="140">
+                        <circle class="progress-ring__circle-bg" stroke-width="12" fill="transparent" r="58" cx="70" cy="70" stroke-linecap="round"/>
+                        <circle class="progress-ring__circle" stroke="#98A869" stroke-width="12" fill="transparent" r="58" cx="70" cy="70" stroke-linecap="round" stroke-dasharray="364.42 364.42" stroke-dashoffset="364.42"/>
+                    </svg>
+                    <div class="ring-content">
+                        <span class="ring-count" id="ring-count-display">0</span>
+                        <span class="ring-label">TODAY</span>
+                    </div>
                 </div>
+                <div id="dashboard-message" class="dashboard-text">Log 3 habits!</div>
             </div>
-            <div id="dashboard-message" class="dashboard-text">Log 3 habits to close the ring!</div>
+
+            <div class="dashboard-right">
+                <div id="weekly-chart" class="chart-container">
+                    </div>
+            </div>
         </div>
 
         <div class="button-grid">
@@ -359,45 +439,59 @@
             </button>
         </div>
 
-        <div class="chart-card">
-            <h2 class="chart-header">Last 7 Days</h2>
-            <div id="weekly-chart" class="chart-container">
-                </div>
-        </div>
-
         <div class="log-card">
             <div class="log-header">
                 <h2>Activity Log</h2>
-                <button class="clear-btn" onclick="clearLog()">Reset</button>
             </div>
             
             <div id="empty-msg" class="empty-state">Loading history...</div>
             <ul id="log-list" class="log-list"></ul>
+            
+            <button id="show-more-btn" class="show-more-btn" onclick="showMore()" style="display: none;">
+                Show More
+            </button>
         </div>
     </div>
 
     <script>
-        // YOUR SPECIFIC SCRIPT URL
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxwNfgHXFSXbxZNxmfhA7hq4Za3wY8GnVQbUsTrbrZ314v7HmKUbOiKX3B9IR1omzmo/exec";
 
         let habitLog = [];
+        let visibleLimit = 5; 
         const DAILY_GOAL = 3;
-        const CIRCUMFERENCE = 2 * Math.PI * 66; 
+        const CIRCUMFERENCE = 2 * Math.PI * 58; 
 
-        // 1. Load Local Cache Immediately
+        // --- THEME LOGIC ---
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.body.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+
+        function toggleTheme() {
+            const current = document.body.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            updateThemeIcon(next);
+            updateDashboard(); // Redraw ring color
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            icon.innerText = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // --- DATA LOGIC ---
         const cached = localStorage.getItem('myHabits');
         if (cached) {
             habitLog = JSON.parse(cached);
             renderList();
         }
 
-        // 2. Fetch Fresh Data
         fetchLog();
 
         async function logHabit(name, icon) {
             const now = new Date();
             
-            // UI Object (With Time)
             const uiEntry = {
                 habit: name,
                 icon: icon,
@@ -405,7 +499,6 @@
                 timeString: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
 
-            // Sheet Payload (Empty Time)
             const sheetPayload = {
                 habit: name,
                 icon: icon,
@@ -413,12 +506,10 @@
                 timeString: "" 
             };
 
-            // UI Update (Optimistic)
             habitLog.unshift(uiEntry);
             localStorage.setItem('myHabits', JSON.stringify(habitLog));
             renderList();
 
-            // Backend Update
             try {
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
@@ -444,15 +535,10 @@
             }
         }
 
-        function clearLog() {
-            if(confirm("Clear local history?")) {
-                habitLog = [];
-                localStorage.removeItem('myHabits');
-                renderList();
-            }
+        function showMore() {
+            visibleLimit += 10;
+            renderList();
         }
-
-        // --- Helper Functions ---
 
         function isToday(dateString) {
             if (!dateString) return false;
@@ -471,8 +557,7 @@
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         }
 
-        // --- Render Functions ---
-
+        // --- RENDER FUNCTIONS ---
         function updateDashboard() {
             const todayCount = habitLog.filter(entry => isToday(entry.dateString)).length;
 
@@ -480,15 +565,19 @@
             const msg = document.getElementById('dashboard-message');
             const circle = document.querySelector('.progress-ring__circle');
             
+            const style = getComputedStyle(document.body);
+            const primaryColor = style.getPropertyValue('--primary').trim();
+            const successColor = style.getPropertyValue('--success-text').trim();
+
             if (todayCount >= DAILY_GOAL) {
-                msg.innerText = "Ring closed! Great job! 🎉";
+                msg.innerText = "Ring closed! 🎉";
                 msg.style.color = "var(--success-text)";
-                circle.style.stroke = "#059669";
+                circle.style.stroke = successColor;
             } else {
                 const left = DAILY_GOAL - todayCount;
-                msg.innerText = `${left} more to close your ring`;
+                msg.innerText = `${left} more to close`;
                 msg.style.color = "var(--text-muted)";
-                circle.style.stroke = "#3b71ca"; // Your Blue
+                circle.style.stroke = primaryColor; 
             }
 
             const progress = Math.min(todayCount / DAILY_GOAL, 1);
@@ -500,7 +589,6 @@
             const chartContainer = document.getElementById('weekly-chart');
             chartContainer.innerHTML = '';
 
-            // Generate last 7 days
             const last7Days = [];
             for (let i = 6; i >= 0; i--) {
                 const d = new Date();
@@ -508,7 +596,6 @@
                 last7Days.push(d);
             }
 
-            // Aggregate Data
             const counts = {};
             habitLog.forEach(entry => {
                 const d = new Date(entry.dateString);
@@ -518,13 +605,11 @@
                 }
             });
 
-            // Scale
-            const maxVal = Math.max(5, ...Object.values(counts));
+            const maxVal = Math.max(3, ...Object.values(counts));
 
-            // Render
             last7Days.forEach(dateObj => {
                 const dateKey = dateObj.toLocaleDateString('en-US');
-                const dayLabel = dateObj.toLocaleDateString('en-US', { weekday: 'narrow' }); // M, T, W...
+                const dayLabel = dateObj.toLocaleDateString('en-US', { weekday: 'narrow' }); 
                 
                 const count = counts[dateKey] || 0;
                 const heightPct = (count / maxVal) * 100;
@@ -546,6 +631,8 @@
         function renderList() {
             const list = document.getElementById('log-list');
             const emptyMsg = document.getElementById('empty-msg');
+            const showMoreBtn = document.getElementById('show-more-btn');
+            
             list.innerHTML = '';
 
             updateDashboard();
@@ -554,11 +641,14 @@
             if (habitLog.length === 0) {
                 emptyMsg.style.display = 'block';
                 emptyMsg.innerText = "No habits logged yet.";
+                showMoreBtn.style.display = 'none';
                 return;
             }
             emptyMsg.style.display = 'none';
 
-            habitLog.forEach(entry => {
+            const visibleItems = habitLog.slice(0, visibleLimit);
+
+            visibleItems.forEach(entry => {
                 const li = document.createElement('li');
                 li.className = 'log-item';
                 
@@ -573,6 +663,12 @@
                 `;
                 list.appendChild(li);
             });
+
+            if (habitLog.length > visibleLimit) {
+                showMoreBtn.style.display = 'block';
+            } else {
+                showMoreBtn.style.display = 'none';
+            }
         }
     </script>
 </body>
